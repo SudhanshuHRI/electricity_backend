@@ -1,5 +1,6 @@
 import express from "express";
 import "dotenv/config";
+import connectDB from "./helpers/db.js"
 
 import adminRoutes from "./routes/adminRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -7,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 const port = process.env.PORT;
+connectDB()
 
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
