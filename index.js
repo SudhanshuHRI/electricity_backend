@@ -3,13 +3,14 @@ import "dotenv/config";
 
 import adminRoutes from "./routes/adminRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 const port = process.env.PORT;
 
-
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
+app.use("/auth", authRoutes);
 app.use("/", (req, res) => {
   res.json({ message: "Welcome to Electricity Back-end" });
 });
