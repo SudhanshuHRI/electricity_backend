@@ -12,5 +12,5 @@ const registerSchema = new mongoose.Schema(
 ); // Adds createdAt & updatedAt fields automatically
 
 // Create and export the model
-const Register = mongoose.model("RegisterModel", registerSchema,"users");
+const Register = mongoose.model("RegisterModel", registerSchema,"theaters");
 export default Register;
