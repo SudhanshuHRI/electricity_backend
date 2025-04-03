@@ -1,11 +1,11 @@
-import { authDB } from "../../helpers/db.js";
+import { authDB } from "../helpers/db.js";
 import mongoose from "mongoose";
 // Define the schema
 const registerSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String },
+    password: { type: String, required: true },
     userType: { type: String, required: true },
   },
   { timestamps: true }

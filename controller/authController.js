@@ -1,17 +1,23 @@
-import Register from "../models/authSchema/registerSchema.js";
+import bcrypt from "bcrypt";
+import Register from "../models/registerSchema.js";
 async function register(req, res) {
   try {
-    console.log(req.body)
-    const registerUser = new Register(req.body);
+    const { name, email, userType, password } = req.body;
+    const registerUser = new Register({
+      name: name,
+      email: email,
+      userType: userType,
+      password: await bcrypt.hash(password, 10),
+    });
     await registerUser.save();
-    res.json({ message: "user created successfully" });
+    res.json({ status: 201, message: "user created successfully" });
   } catch (error) {
-    res.json({"try-catch error": error});
+    res.json({ "try-catch error": error });
   }
 }
 
 async function login(req, res) {
-  res.json("login api working");
+  res.json(req.body);
 }
 async function forgotPassword(req, res) {
   res.json("forgot api working");
