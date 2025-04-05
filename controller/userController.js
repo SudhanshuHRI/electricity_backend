@@ -5,3 +5,12 @@ async function base(req,res){
    export default {
        base,
    }
+
+
+
+
+
+
+
+
+   
