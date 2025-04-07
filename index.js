@@ -18,6 +18,8 @@ app.use("/", (req, res) => {
   res.json({ message: "Welcome to Electricity Back-end" });
 });
 
+
+
 app.listen(port, () => {
   console.log("port is running on 3500");
 });
