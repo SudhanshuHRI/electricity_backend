@@ -7,10 +7,13 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
+const port = process.env.PORT || 3500;
 
-const port = process.env.PORT;
+// Middlewares
+app.use(express.json());
 
-app.use(express.json()); // it converts req.body into json. So, we dont get undefined in req.body.
+
+// Routes
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
@@ -19,7 +22,7 @@ app.use("/", (req, res) => {
 });
 
 
-
+// Server Details
 app.listen(port, () => {
-  console.log("port is running on 3500");
+  console.log(`port is running on : ${port}`);
 });
