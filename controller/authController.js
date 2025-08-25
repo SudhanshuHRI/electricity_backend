@@ -75,54 +75,17 @@ async function login(req, res) {
 }
 
 async function forgotPassword(req, res) {
-  //   📝 Steps to Implement Forgot Password
-  // 1️⃣ User requests a password reset → Enter email.
-  // 2️⃣ Generate a secure reset token → Save it in the database as resetpasswordToken.
-  //  also send that token in reset link like "{url}/reset-password/:jwttoken"
-
-  // 3️⃣ Send a reset link via email (with the token).
-  // 4️⃣ User clicks the link then hit api the we will get the token through req.params > varify token with saved database token then g
-  // 5️⃣ Hash the new password using bcrypt and save it.
 
   const { email } = req.body;
 
   const user = await Register.findOne({ email: email.toLowerCase() });
 
-  console.log(user);
+  console.log("user : ",user);
 
   if (!user) {
     return res.json({ status: 404, message: "User not found!" });
   } else {
-    const jwttoken = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-      },
-      process.env.JWT_SECREAT_KEY,
-      { expiresIn: "1h" }
-    );
-
-    console.log(jwttoken);
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      secure: true, // true for port 465, false for other ports
-      auth: {
-        user: process.env.MY_EMAIL,
-        pass: process.env.MY_PASSWORD,
-      },
-    });
-
-    const url = "http://localhost:3500/auth/reset-password";
-
-    const info = await transporter.sendMail({
-      from: '"Sudhanshu Srivastava👻" <salil221254@gmail.com>', // sender address
-      to: email, // list of receivers
-      subject: "Password reset request", // Subject line
-      text: `Click on the link to reset your password: ${url}`, // plain text body
-      //html: "<b>Hello world?</b>", // html body
-    });
-    res.json(info);
+   
   }
 }
 
