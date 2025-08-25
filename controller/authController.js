@@ -7,52 +7,70 @@ import nodemailer from "nodemailer";
 async function register(req, res) {
   try {
     const { name, email, userType, password } = req.body;
-    const registerUser = new Register({
-      name: name,
-      email: email.toLowerCase(),
-      userType: userType,
-      password: await bcrypt.hash(password, 10),
-    });
-    await registerUser.save();
-    res.json({ status: 201, message: "user created successfully" });
+
+    if (name && email && userType && password) {
+      const findUser = await Register.findOne({ email: email.toLowerCase() });
+
+      if (findUser) {
+        res.json({ status: 400, message: "Email already registered!!" });
+      } else {
+        const registerUser = new Register({
+          name: name,
+          email: email.toLowerCase(),
+          userType: userType.toLowerCase(),
+          password: await bcrypt.hash(password, 10),
+        });
+        await registerUser.save();
+        res.json({ status: 201, message: "user created successfully" });
+      }
+    } else {
+      res.json({
+        status: 404,
+        message: "name, email, userType, password are required!!",
+      });
+    }
   } catch (error) {
-    res.json({ "try-catch error": error });
+    res.json({ TryCatchError: error });
   }
 }
 
 async function login(req, res) {
   const { email, password: plainPassword } = req.body;
 
-  const user = await Register.findOne({ email: email.toLowerCase() });
+  if (email && plainPassword) {
+    const user = await Register.findOne({ email: email.toLowerCase() });
 
-  if (user) {
-    const { password: hashedPassword } = user;
+    if (user) {
+      const { password: hashedPassword } = user;
 
-    const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
+      const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
 
-    if (isMatch) {
-      const jwttoken = jwt.sign(
-        {
-          id: user._id,
-          email: user.email,
-        },
-        process.env.JWT_SECREAT_KEY,
-        { expiresIn: "1h" }
-      );
+      if (isMatch) {
+        const jwttoken = jwt.sign(
+          {
+            id: user._id,
+            email: user.email,
+          },
+          process.env.JWT_SECREAT_KEY,
+          { expiresIn: "1h" }
+        );
 
-      res.cookie("jwttoken", jwttoken, {
-        httpOnly: true, // Prevent JavaScript access (XSS protection)
-        secure: false, // Use HTTPS in production
-        sameSite: "Strict", // Prevent CSRF attacks
-        maxAge: 3600000, // 1 hour expiration
-      });
+        res.cookie("jwttoken", jwttoken, {
+          httpOnly: true, // Prevent JavaScript access (XSS protection)
+          secure: false, // Use HTTPS in production
+          sameSite: "Strict", // Prevent CSRF attacks
+          maxAge: 3600000, // 1 hour expiration
+        });
 
-      res.json({ status: 200, message: "Login Successfull!" });
+        res.json({ status: 200, message: "Login Successfull!" });
+      } else {
+        res.json({ status: 401, message: "Wrong Password!" });
+      }
     } else {
-      res.json({ status: 401, message: "Wrong Password!" });
+      res.json({ status: 404, message: "No user found!" });
     }
   } else {
-    res.json({ status: 404, message: "No user found!" });
+    res.json({ status: 404, message: "Email and Password are required!!" });
   }
 }
 
@@ -61,7 +79,7 @@ async function forgotPassword(req, res) {
   // 1️⃣ User requests a password reset → Enter email.
   // 2️⃣ Generate a secure reset token → Save it in the database as resetpasswordToken.
   //  also send that token in reset link like "{url}/reset-password/:jwttoken"
-  
+
   // 3️⃣ Send a reset link via email (with the token).
   // 4️⃣ User clicks the link then hit api the we will get the token through req.params > varify token with saved database token then g
   // 5️⃣ Hash the new password using bcrypt and save it.
