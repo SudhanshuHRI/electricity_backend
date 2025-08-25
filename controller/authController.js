@@ -81,6 +81,9 @@ async function forgotPassword(req, res) {
   const user = await Register.findOne({ email: email.toLowerCase() });
 
   console.log("user : ",user);
+  // create a password
+  // send it to user's email
+  // also send it in users database with hashing
 
   if (!user) {
     return res.json({ status: 404, message: "User not found!" });
